@@ -1,3 +1,9 @@
+## [12.1.0](https://github.com/appium/WebDriverAgent/compare/v12.0.0...v12.1.0) (2026-04-24)
+
+### Features
+
+* **client:** add ability to set headers on requests ([#1127](https://github.com/appium/WebDriverAgent/issues/1127)) ([a8889cd](https://github.com/appium/WebDriverAgent/commit/a8889cd7cb85c1b58faee306295fb3c5c2a9d0e3))
+
 ## [12.0.0](https://github.com/appium/WebDriverAgent/compare/v11.4.3...v12.0.0) (2026-04-14)
 
 ### ⚠ BREAKING CHANGES
