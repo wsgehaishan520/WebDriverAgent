@@ -1,3 +1,9 @@
+## [12.1.1](https://github.com/appium/WebDriverAgent/compare/v12.1.0...v12.1.1) (2026-04-27)
+
+### Miscellaneous Chores
+
+* **compile:** fix compilation ([#1129](https://github.com/appium/WebDriverAgent/issues/1129)) ([76d59e8](https://github.com/appium/WebDriverAgent/commit/76d59e85c75680c97abe9e67fdf4a70cacd46418))
+
 ## [12.1.0](https://github.com/appium/WebDriverAgent/compare/v12.0.0...v12.1.0) (2026-04-24)
 
 ### Features
