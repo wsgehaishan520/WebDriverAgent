@@ -1,3 +1,9 @@
+## [12.2.1](https://github.com/appium/WebDriverAgent/compare/v12.2.0...v12.2.1) (2026-05-06)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 21.1.2 to 22.0.0 ([#1133](https://github.com/appium/WebDriverAgent/issues/1133)) ([11c579b](https://github.com/appium/WebDriverAgent/commit/11c579b7ed3a9995715d65590a2959763871aa6d))
+
 ## [12.2.0](https://github.com/appium/WebDriverAgent/compare/v12.1.1...v12.2.0) (2026-04-29)
 
 ### Features
