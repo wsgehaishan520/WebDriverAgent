@@ -1,3 +1,16 @@
+## [13.0.0](https://github.com/appium/WebDriverAgent/compare/v12.2.2...v13.0.0) (2026-05-17)
+
+### ⚠ BREAKING CHANGES
+
+* quitAndUninstall() removed — use quit() only. App uninstall is out of scope for this module.
+* uninstall() removed — WDA must not be uninstalled from this package; callers (e.g. xcuitest-driver) should own that if needed.
+* setupCaching() no longer uninstalls WDA — on bundle-id or version mismatch it logs and skips caching instead of removing apps from the device. Also, it now returns the cached url on success.
+* appium-ios-device dependency removed — preinstalled WDA on real devices always launches via devicectl (no iOS < 17 Xctest fallback).
+
+### Features
+
+* Drop legacy APIs ([#1137](https://github.com/appium/WebDriverAgent/issues/1137)) ([8995d24](https://github.com/appium/WebDriverAgent/commit/8995d24e16634a4624918319996839993502c7b4))
+
 ## [12.2.2](https://github.com/appium/WebDriverAgent/compare/v12.2.1...v12.2.2) (2026-05-08)
 
 ### Bug Fixes
