@@ -1,3 +1,10 @@
+## [13.1.0](https://github.com/appium/WebDriverAgent/compare/v13.0.0...v13.1.0) (2026-05-21)
+
+### Features
+
+* add app icon to WebDriverAgentRunner ([#1138](https://github.com/appium/WebDriverAgent/issues/1138)) ([fe8adc8](https://github.com/appium/WebDriverAgent/commit/fe8adc89923994428783397170de850e11ebb3c6))
+* Add helper method to fetch build settings ([#1139](https://github.com/appium/WebDriverAgent/issues/1139)) ([56b5f38](https://github.com/appium/WebDriverAgent/commit/56b5f384ed9ba1a014d4b642ddf26b8573ceaafe))
+
 ## [13.0.0](https://github.com/appium/WebDriverAgent/compare/v12.2.2...v13.0.0) (2026-05-17)
 
 ### ⚠ BREAKING CHANGES
