@@ -1,3 +1,9 @@
+## [13.1.1](https://github.com/appium/WebDriverAgent/compare/v13.1.0...v13.1.1) (2026-05-22)
+
+### Bug Fixes
+
+* ship Scripts/embed-runner-icon.sh in the npm package ([#1141](https://github.com/appium/WebDriverAgent/issues/1141)) ([17ac1c1](https://github.com/appium/WebDriverAgent/commit/17ac1c16a0890ee0fbfe73504a3ff570dfe1a7bf)), closes [#1138](https://github.com/appium/WebDriverAgent/issues/1138)
+
 ## [13.1.0](https://github.com/appium/WebDriverAgent/compare/v13.0.0...v13.1.0) (2026-05-21)
 
 ### Features
