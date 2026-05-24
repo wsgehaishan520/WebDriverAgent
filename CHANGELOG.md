@@ -1,3 +1,9 @@
+## [13.1.3](https://github.com/appium/WebDriverAgent/compare/v13.1.2...v13.1.3) (2026-05-24)
+
+### Bug Fixes
+
+* Scheme for derived data path retrieval ([#1142](https://github.com/appium/WebDriverAgent/issues/1142)) ([9ada5f6](https://github.com/appium/WebDriverAgent/commit/9ada5f6fe2af29278c488e845f8714f22fabfeee))
+
 ## [13.1.2](https://github.com/appium/WebDriverAgent/compare/v13.1.1...v13.1.2) (2026-05-23)
 
 ### Bug Fixes
