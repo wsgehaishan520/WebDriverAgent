@@ -190,7 +190,10 @@ export class XcodeBuild {
       return this.derivedDataPath;
     }
 
-    const buildSettings = await this.retrieveBuildSettings();
+    // iOS/tvOS share the same derived data path
+    const buildSettings = await this.retrieveBuildSettings({
+      scheme: 'WebDriverAgentRunner',
+    });
     const buildDir = buildSettings?.BUILD_DIR;
     if (!buildDir) {
       this.log.warn('Cannot parse WDA BUILD_DIR from build settings');
