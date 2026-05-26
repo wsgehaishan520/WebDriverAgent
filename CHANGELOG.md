@@ -1,3 +1,9 @@
+## [13.2.0](https://github.com/appium/WebDriverAgent/compare/v13.1.3...v13.2.0) (2026-05-26)
+
+### Features
+
+* Add XPath extensions ([#1144](https://github.com/appium/WebDriverAgent/issues/1144)) ([a975b89](https://github.com/appium/WebDriverAgent/commit/a975b89ac998d31a72bf3723b843d85af8867cf0))
+
 ## [13.1.3](https://github.com/appium/WebDriverAgent/compare/v13.1.2...v13.1.3) (2026-05-24)
 
 ### Bug Fixes
