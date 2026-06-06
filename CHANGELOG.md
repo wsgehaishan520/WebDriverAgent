@@ -1,3 +1,9 @@
+## [13.2.2](https://github.com/appium/WebDriverAgent/compare/v13.2.1...v13.2.2) (2026-06-06)
+
+### Miscellaneous Chores
+
+* Refactor session creation handler ([#1149](https://github.com/appium/WebDriverAgent/issues/1149)) ([923b523](https://github.com/appium/WebDriverAgent/commit/923b523b55f880b921de2c95a82786ce0699cb9d))
+
 ## [13.2.1](https://github.com/appium/WebDriverAgent/compare/v13.2.0...v13.2.1) (2026-06-06)
 
 ### Miscellaneous Chores
