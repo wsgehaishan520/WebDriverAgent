@@ -1,3 +1,9 @@
+## [13.2.1](https://github.com/appium/WebDriverAgent/compare/v13.2.0...v13.2.1) (2026-06-06)
+
+### Miscellaneous Chores
+
+* Refactor settings handling API ([#1148](https://github.com/appium/WebDriverAgent/issues/1148)) ([ff7ac36](https://github.com/appium/WebDriverAgent/commit/ff7ac368debb22659509169a0eca530bae3dc879))
+
 ## [13.2.0](https://github.com/appium/WebDriverAgent/compare/v13.1.3...v13.2.0) (2026-05-26)
 
 ### Features
