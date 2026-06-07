@@ -1,3 +1,9 @@
+## [13.2.3](https://github.com/appium/WebDriverAgent/compare/v13.2.2...v13.2.3) (2026-06-07)
+
+### Bug Fixes
+
+* auto-handle iOS 18+ limited access permission prompt ([#1150](https://github.com/appium/WebDriverAgent/issues/1150)) ([98d79e7](https://github.com/appium/WebDriverAgent/commit/98d79e7c3875424cb4b5fdee55bb079286a14b05))
+
 ## [13.2.2](https://github.com/appium/WebDriverAgent/compare/v13.2.1...v13.2.2) (2026-06-06)
 
 ### Miscellaneous Chores
