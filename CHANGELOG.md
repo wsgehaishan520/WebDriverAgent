@@ -1,3 +1,13 @@
+## [14.0.0](https://github.com/appium/WebDriverAgent/compare/v13.3.0...v14.0.0) (2026-06-09)
+
+### ⚠ BREAKING CHANGES
+
+* bump the deployment target to 15
+
+### Features
+
+* bump the deployment target to 15 ([#1152](https://github.com/appium/WebDriverAgent/issues/1152)) ([74498f7](https://github.com/appium/WebDriverAgent/commit/74498f79c9f00678f2bc37b9afb50f70e30d0f88))
+
 ## [13.3.0](https://github.com/appium/WebDriverAgent/compare/v13.2.4...v13.3.0) (2026-06-09)
 
 ### Features
