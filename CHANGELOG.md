@@ -1,3 +1,9 @@
+## [13.3.0](https://github.com/appium/WebDriverAgent/compare/v13.2.4...v13.3.0) (2026-06-09)
+
+### Features
+
+* Expose native isAccessibilityElement ([#1146](https://github.com/appium/WebDriverAgent/issues/1146)) ([e615621](https://github.com/appium/WebDriverAgent/commit/e6156212e6fba6af98a69a400f5fa18b67f1e3e3))
+
 ## [13.2.4](https://github.com/appium/WebDriverAgent/compare/v13.2.3...v13.2.4) (2026-06-08)
 
 ### Bug Fixes
