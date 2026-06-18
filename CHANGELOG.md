@@ -1,3 +1,9 @@
+## [14.2.0](https://github.com/appium/WebDriverAgent/compare/v14.1.1...v14.2.0) (2026-06-18)
+
+### Features
+
+* Limit the maximum request body size ([#1158](https://github.com/appium/WebDriverAgent/issues/1158)) ([9ea244b](https://github.com/appium/WebDriverAgent/commit/9ea244b29e3c2b160079a620fdf4ef445a3c1e38))
+
 ## [14.1.1](https://github.com/appium/WebDriverAgent/compare/v14.1.0...v14.1.1) (2026-06-10)
 
 ### Miscellaneous Chores
