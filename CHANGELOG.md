@@ -1,3 +1,14 @@
+## [15.0.0](https://github.com/appium/WebDriverAgent/compare/v14.2.1...v15.0.0) (2026-06-22)
+
+### ⚠ BREAKING CHANGES
+
+* AppleDevice is now abstract and only contains udid; it no longer exposes simctl or devicectl.
+* Preinstalled WDA launch/terminate no longer falls back to package-owned simctl or devicectl behavior. Callers must provide hostOps.simulator or hostOps.realDevicePreinstalled for those flows.
+
+### Features
+
+* Abstract out platform-specific actions ([#1160](https://github.com/appium/WebDriverAgent/issues/1160)) ([890d32b](https://github.com/appium/WebDriverAgent/commit/890d32b4ac3fa881784dacc012650d58274941c8))
+
 ## [14.2.1](https://github.com/appium/WebDriverAgent/compare/v14.2.0...v14.2.1) (2026-06-19)
 
 ### Miscellaneous Chores
