@@ -1,3 +1,9 @@
+## [15.1.0](https://github.com/appium/WebDriverAgent/compare/v15.0.0...v15.1.0) (2026-06-26)
+
+### Features
+
+* Expose device orientation via /wda/deviceOrientation ([#1162](https://github.com/appium/WebDriverAgent/issues/1162)) ([deb623c](https://github.com/appium/WebDriverAgent/commit/deb623c71a0598f1932c8018f985b973aa2fb9ff))
+
 ## [15.0.0](https://github.com/appium/WebDriverAgent/compare/v14.2.1...v15.0.0) (2026-06-22)
 
 ### ⚠ BREAKING CHANGES
