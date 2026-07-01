@@ -1,3 +1,9 @@
+## [15.1.3](https://github.com/appium/WebDriverAgent/compare/v15.1.2...v15.1.3) (2026-07-01)
+
+### Miscellaneous Chores
+
+* downgrade conventional-changelog-conventionalcommits to v9 ([#1165](https://github.com/appium/WebDriverAgent/issues/1165)) ([6ac033d](https://github.com/appium/WebDriverAgent/commit/6ac033db8fdec31f11d246f8a254491517976013))
+
 ## [15.1.2](https://github.com/appium/WebDriverAgent/compare/v15.1.1...v15.1.2) (2026-07-01)
 
 ## [15.1.1](https://github.com/appium/WebDriverAgent/compare/v15.1.0...v15.1.1) (2026-06-29)
