@@ -1,3 +1,5 @@
+## [15.1.2](https://github.com/appium/WebDriverAgent/compare/v15.1.1...v15.1.2) (2026-07-01)
+
 ## [15.1.1](https://github.com/appium/WebDriverAgent/compare/v15.1.0...v15.1.1) (2026-06-29)
 
 ## [15.1.0](https://github.com/appium/WebDriverAgent/compare/v15.0.0...v15.1.0) (2026-06-26)
