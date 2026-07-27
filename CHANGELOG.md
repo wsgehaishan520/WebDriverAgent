@@ -1,3 +1,9 @@
+## [16.0.1](https://github.com/appium/WebDriverAgent/compare/v16.0.0...v16.0.1) (2026-07-27)
+
+### Miscellaneous Chores
+
+* Integrate oxc and release configs ([#1182](https://github.com/appium/WebDriverAgent/issues/1182)) ([0a7c1ee](https://github.com/appium/WebDriverAgent/commit/0a7c1ee65aa81344e01b7211398e3b8a8209acf2))
+
 ## [16.0.0](https://github.com/appium/WebDriverAgent/compare/v15.1.6...v16.0.0) (2026-07-23)
 
 ### ⚠ BREAKING CHANGES
