@@ -1,3 +1,9 @@
+## [16.0.3](https://github.com/appium/WebDriverAgent/compare/v16.0.2...v16.0.3) (2026-07-28)
+
+### Miscellaneous Chores
+
+* Update @appium/tsconfig version to 1.2.0 ([4948b40](https://github.com/appium/WebDriverAgent/commit/4948b40266d3ef39f67ac2612253b613f8fc9ee0))
+
 ## [16.0.2](https://github.com/appium/WebDriverAgent/compare/v16.0.1...v16.0.2) (2026-07-28)
 
 ### Miscellaneous Chores
