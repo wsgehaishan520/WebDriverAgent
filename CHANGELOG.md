@@ -1,3 +1,9 @@
+## [16.0.2](https://github.com/appium/WebDriverAgent/compare/v16.0.1...v16.0.2) (2026-07-28)
+
+### Miscellaneous Chores
+
+* Tune editorconfig ([c111a46](https://github.com/appium/WebDriverAgent/commit/c111a46d8e619e1ebcb54b0ff579b74984c21e52))
+
 ## [16.0.1](https://github.com/appium/WebDriverAgent/compare/v16.0.0...v16.0.1) (2026-07-27)
 
 ### Miscellaneous Chores
