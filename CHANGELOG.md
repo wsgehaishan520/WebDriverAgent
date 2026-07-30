@@ -1,3 +1,9 @@
+## [16.1.0](https://github.com/appium/WebDriverAgent/compare/v16.0.3...v16.1.0) (2026-07-30)
+
+### Features
+
+* Add callback for server startup failure ([#1192](https://github.com/appium/WebDriverAgent/issues/1192)) ([3a80439](https://github.com/appium/WebDriverAgent/commit/3a80439603a45321ad8d238186b6327bb2599a8b))
+
 ## [16.0.3](https://github.com/appium/WebDriverAgent/compare/v16.0.2...v16.0.3) (2026-07-28)
 
 ### Miscellaneous Chores
