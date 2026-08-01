@@ -1,3 +1,9 @@
+## [16.1.1](https://github.com/appium/WebDriverAgent/compare/v16.1.0...v16.1.1) (2026-08-01)
+
+### Miscellaneous Chores
+
+* Drop esmock ([#1195](https://github.com/appium/WebDriverAgent/issues/1195)) ([987b06b](https://github.com/appium/WebDriverAgent/commit/987b06ba11c0084b9d6b921d7ecf86e8234c110a))
+
 ## [16.1.0](https://github.com/appium/WebDriverAgent/compare/v16.0.3...v16.1.0) (2026-07-30)
 
 ### Features
