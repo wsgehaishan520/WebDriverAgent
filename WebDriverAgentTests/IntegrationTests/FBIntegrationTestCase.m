@@ -10,6 +10,7 @@
 
 #import "FBAlert.h"
 #import "FBTestMacros.h"
+#import "FBExceptions.h"
 #import "FBIntegrationTestCase.h"
 #import "FBConfiguration.h"
 #import "FBMacros.h"
@@ -151,7 +152,14 @@ NSArray<NSString *> *const FBMainViewButtonLabels = @[
 - (void)clearAlert
 {
   [self.testedApplication fb_waitUntilStable];
-  [[FBAlert alertWithApplication:self.testedApplication] dismissWithError:nil];
+  @try {
+    [[FBAlert alertWithApplication:self.testedApplication] dismiss];
+  } @catch (NSException *e) {
+    if (![e.name isEqualToString:FBAlertNotPresentException]) {
+      @throw e;
+    }
+    // No alert is present, nothing to clear
+  }
   [self.testedApplication fb_waitUntilStable];
   FBAssertWaitTillBecomesTrue(self.testedApplication.alerts.count == 0);
 }
