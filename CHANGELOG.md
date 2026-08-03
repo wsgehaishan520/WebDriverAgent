@@ -1,3 +1,9 @@
+## [16.1.3](https://github.com/appium/WebDriverAgent/compare/v16.1.2...v16.1.3) (2026-08-03)
+
+### Bug Fixes
+
+* Optimize alert operations ([#1193](https://github.com/appium/WebDriverAgent/issues/1193)) ([2bc1c40](https://github.com/appium/WebDriverAgent/commit/2bc1c40d20883a9b924b8a177be4d43ffd497901))
+
 ## [16.1.2](https://github.com/appium/WebDriverAgent/compare/v16.1.1...v16.1.2) (2026-08-03)
 
 ### Bug Fixes
