@@ -1,3 +1,10 @@
+## [16.1.4](https://github.com/appium/WebDriverAgent/compare/v16.1.3...v16.1.4) (2026-08-04)
+
+### Bug Fixes
+
+* Eliminate unnecessary activeApplication call in handlePressAndDragCoordinateWithVelocity ([#1197](https://github.com/appium/WebDriverAgent/issues/1197)) ([cf604bd](https://github.com/appium/WebDriverAgent/commit/cf604bdeacb3accceb2346551a3704c0dee2c2bd))
+* Reduce the amount of AX calls while determining direction to focused element ([#1196](https://github.com/appium/WebDriverAgent/issues/1196)) ([5c08bed](https://github.com/appium/WebDriverAgent/commit/5c08beddf40645a7f7237c4205f5a8c1ffb4cc89))
+
 ## [16.1.3](https://github.com/appium/WebDriverAgent/compare/v16.1.2...v16.1.3) (2026-08-03)
 
 ### Bug Fixes
