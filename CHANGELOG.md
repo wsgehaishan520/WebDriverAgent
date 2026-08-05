@@ -1,3 +1,9 @@
+## [16.1.5](https://github.com/appium/WebDriverAgent/compare/v16.1.4...v16.1.5) (2026-08-05)
+
+### Bug Fixes
+
+* Update various consumers to properly use cached snapshots ([#1198](https://github.com/appium/WebDriverAgent/issues/1198)) ([bed67cc](https://github.com/appium/WebDriverAgent/commit/bed67ccf6a1375f1d1164d7a2ef18d10ac44f632))
+
 ## [16.1.4](https://github.com/appium/WebDriverAgent/compare/v16.1.3...v16.1.4) (2026-08-04)
 
 ### Bug Fixes
