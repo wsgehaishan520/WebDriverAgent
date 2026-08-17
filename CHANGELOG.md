@@ -1,3 +1,9 @@
+## [16.2.1](https://github.com/appium/WebDriverAgent/compare/v16.2.0...v16.2.1) (2026-08-17)
+
+### Bug Fixes
+
+* sign the runner by certificate hash instead of display name ([#1211](https://github.com/appium/WebDriverAgent/issues/1211)) ([59e95a7](https://github.com/appium/WebDriverAgent/commit/59e95a73986a91c90c951608d7744a032997810b))
+
 ## [16.2.0](https://github.com/appium/WebDriverAgent/compare/v16.1.7...v16.2.0) (2026-08-13)
 
 ### Features
