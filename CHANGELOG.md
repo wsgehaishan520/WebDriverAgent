@@ -1,3 +1,9 @@
+## [16.2.2](https://github.com/appium/WebDriverAgent/compare/v16.2.1...v16.2.2) (2026-08-18)
+
+### Reverts
+
+* Revert "ci: use Xcode 27 ([#1203](https://github.com/appium/WebDriverAgent/issues/1203))" ([#1212](https://github.com/appium/WebDriverAgent/issues/1212)) ([7d06063](https://github.com/appium/WebDriverAgent/commit/7d060631a4f1a5c5c145c11efeed96f505c0a6e2))
+
 ## [16.2.1](https://github.com/appium/WebDriverAgent/compare/v16.2.0...v16.2.1) (2026-08-17)
 
 ### Bug Fixes
