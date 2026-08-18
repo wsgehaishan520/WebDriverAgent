@@ -1,3 +1,9 @@
+## [16.3.0](https://github.com/appium/WebDriverAgent/compare/v16.2.2...v16.3.0) (2026-08-18)
+
+### Features
+
+* Add WatchOS support ([#1209](https://github.com/appium/WebDriverAgent/issues/1209)) ([90b443c](https://github.com/appium/WebDriverAgent/commit/90b443c543346a4d12c5a5b69f4532c84cf2ae8f))
+
 ## [16.2.2](https://github.com/appium/WebDriverAgent/compare/v16.2.1...v16.2.2) (2026-08-18)
 
 ### Reverts
