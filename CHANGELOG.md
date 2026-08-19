@@ -1,3 +1,9 @@
+## [16.4.0](https://github.com/appium/WebDriverAgent/compare/v16.3.0...v16.4.0) (2026-08-19)
+
+### Features
+
+* Add Digital Crown rotation and hand gesture support for watchOS ([#1215](https://github.com/appium/WebDriverAgent/issues/1215)) ([5e021f8](https://github.com/appium/WebDriverAgent/commit/5e021f8d12791d126e9524763d9455ceaf04bb2f))
+
 ## [16.3.0](https://github.com/appium/WebDriverAgent/compare/v16.2.2...v16.3.0) (2026-08-18)
 
 ### Features
