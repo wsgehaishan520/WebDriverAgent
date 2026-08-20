@@ -1,3 +1,9 @@
+## [16.5.1](https://github.com/appium/WebDriverAgent/compare/v16.5.0...v16.5.1) (2026-08-20)
+
+### Bug Fixes
+
+* add watchOS assets to GitHub release artifacts ([#1219](https://github.com/appium/WebDriverAgent/issues/1219)) ([ce5a9e8](https://github.com/appium/WebDriverAgent/commit/ce5a9e8af36747a72669c34b38bd39e495b57f5b))
+
 ## [16.5.0](https://github.com/appium/WebDriverAgent/compare/v16.4.0...v16.5.0) (2026-08-20)
 
 ### Features
