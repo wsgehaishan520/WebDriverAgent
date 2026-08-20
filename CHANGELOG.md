@@ -1,3 +1,9 @@
+## [16.5.0](https://github.com/appium/WebDriverAgent/compare/v16.4.0...v16.5.0) (2026-08-20)
+
+### Features
+
+* Add watchOS support to the TS driver, functional tests, and release pipeline ([#1217](https://github.com/appium/WebDriverAgent/issues/1217)) ([b53bb8f](https://github.com/appium/WebDriverAgent/commit/b53bb8fbd03ea37fd3bfc4e3eca4d2c6765b9c9c))
+
 ## [16.4.0](https://github.com/appium/WebDriverAgent/compare/v16.3.0...v16.4.0) (2026-08-19)
 
 ### Features
