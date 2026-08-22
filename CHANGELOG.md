@@ -1,3 +1,9 @@
+## [16.7.0](https://github.com/appium/WebDriverAgent/compare/v16.6.0...v16.7.0) (2026-08-22)
+
+### Features
+
+* unify HTTP server across iOS/tvOS/watchOS on Network.framework ([#1221](https://github.com/appium/WebDriverAgent/issues/1221)) ([cd741c5](https://github.com/appium/WebDriverAgent/commit/cd741c5cafe47d03635a88cc9296bbd5a841e773))
+
 ## [16.6.0](https://github.com/appium/WebDriverAgent/compare/v16.5.1...v16.6.0) (2026-08-22)
 
 ### Features
