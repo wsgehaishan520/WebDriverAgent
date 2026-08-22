@@ -1,3 +1,9 @@
+## [16.6.0](https://github.com/appium/WebDriverAgent/compare/v16.5.1...v16.6.0) (2026-08-22)
+
+### Features
+
+* Add MJPEG screenshot streaming support to watchOS ([#1220](https://github.com/appium/WebDriverAgent/issues/1220)) ([c6dcf03](https://github.com/appium/WebDriverAgent/commit/c6dcf03096dd5faab83398f16fb772724fcc5220))
+
 ## [16.5.1](https://github.com/appium/WebDriverAgent/compare/v16.5.0...v16.5.1) (2026-08-20)
 
 ### Bug Fixes
