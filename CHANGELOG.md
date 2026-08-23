@@ -1,3 +1,9 @@
+## [16.7.1](https://github.com/appium/WebDriverAgent/compare/v16.7.0...v16.7.1) (2026-08-23)
+
+### Bug Fixes
+
+* return W3C-compliant JSON error for unmatched routes ([#1223](https://github.com/appium/WebDriverAgent/issues/1223)) ([c951a91](https://github.com/appium/WebDriverAgent/commit/c951a91c8202d3c875db04dd633d37b409c80e43))
+
 ## [16.7.0](https://github.com/appium/WebDriverAgent/compare/v16.6.0...v16.7.0) (2026-08-22)
 
 ### Features
