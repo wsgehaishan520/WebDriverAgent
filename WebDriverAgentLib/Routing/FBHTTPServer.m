@@ -35,6 +35,7 @@ static NSData * _Nonnull FBUTF8Data(NSString *string)
 @property (nonatomic, strong) NSRegularExpression *regex;
 @property (nonatomic, copy, nullable) NSArray<NSString *> *keys;
 @property (nonatomic, copy) void (^block)(RouteRequest *request, RouteResponse *response);
+@property (nonatomic, assign) BOOL isStandalone;
 @end
 
 @implementation FBHTTPRoute
@@ -55,6 +56,25 @@ static NSData * _Nonnull FBUTF8Data(NSString *string)
 @end
 
 
+// One dispatched-but-not-yet-answered request. Default (pointer) identity, so two pipelined
+// requests sharing a connection are never conflated into a single tracked entry.
+@interface FBPendingRequest : NSObject
+@property (nonatomic, strong, readonly) nw_connection_t client;
+@end
+
+@implementation FBPendingRequest
+
+- (instancetype)initWithClient:(nw_connection_t)client
+{
+  if ((self = [super init])) {
+    _client = client;
+  }
+  return self;
+}
+
+@end
+
+
 @interface FBHTTPServer () <FBTCPSocketDelegate>
 
 @property (nonatomic, nullable, strong) FBTCPSocket *socket;
@@ -67,6 +87,20 @@ static NSData * _Nonnull FBUTF8Data(NSString *string)
 // Per-client cache of the already-parsed request line + headers while its body is still
 // arriving; nil while a client's next unread bytes start with an unparsed header block.
 @property (nonatomic, strong) NSMapTable<id, FBPendingHTTPRequestHeader *> *pendingRequestHeaders;
+// All buffer access - appending new data and -processBufferForClient:'s unlocked parse - is
+// funneled through this one serial queue, so appends can never race a parse.
+@property (nonatomic, strong) dispatch_queue_t bufferProcessingQueue;
+// Connections with a request parsed off the buffer but not yet answered. Blocks
+// -processBufferForClient: from starting the next pipelined request, so responses on one
+// connection can't be written out of order. Guarded by @synchronized(self.connectionBuffers).
+@property (nonatomic, strong) NSMutableSet *connectionsAwaitingResponse;
+// Keyed by "METHOD path" - requests waiting on an already in-flight standalone request for that
+// endpoint. Guarded by @synchronized(self.standaloneWaiters).
+@property (nonatomic, strong) NSMutableDictionary<NSString *, NSMutableArray<FBPendingRequest *> *> *standaloneWaiters;
+// Keyed by the "sessionID" path param - requests currently queued or executing for that session,
+// standalone or not (except DELETE /session itself - see -dispatchMethod:). See
+// -abandonPendingRequestsForSessionID:. Guarded by @synchronized(self.pendingSessionRequests).
+@property (nonatomic, strong) NSMutableDictionary<NSString *, NSMutableSet<FBPendingRequest *> *> *pendingSessionRequests;
 
 @end
 
@@ -81,6 +115,10 @@ static NSData * _Nonnull FBUTF8Data(NSString *string)
                                                  valueOptions:(NSPointerFunctionsOptions)NSMapTableStrongMemory];
     _pendingRequestHeaders = [NSMapTable mapTableWithKeyOptions:(NSPointerFunctionsOptions)(NSMapTableObjectPointerPersonality | NSMapTableStrongMemory)
                                                     valueOptions:(NSPointerFunctionsOptions)NSMapTableStrongMemory];
+    _bufferProcessingQueue = dispatch_queue_create("com.facebook.wda.http.bufferProcessing", DISPATCH_QUEUE_SERIAL);
+    _connectionsAwaitingResponse = [NSMutableSet set];
+    _standaloneWaiters = [NSMutableDictionary dictionary];
+    _pendingSessionRequests = [NSMutableDictionary dictionary];
   }
   return self;
 }
@@ -107,8 +145,7 @@ static NSData * _Nonnull FBUTF8Data(NSString *string)
   FBHTTPRoute *route = [FBHTTPRoute new];
   NSMutableArray<NSString *> *keys = [NSMutableArray array];
 
-  // Escape regex-significant characters before substituting :param placeholders, like
-  // RoutingHTTPServer.m used to.
+  // Escape regex-significant characters before substituting :param placeholders.
   NSRegularExpression *escapeRegex = [NSRegularExpression regularExpressionWithPattern:@"[.+()]"
                                                                                 options:(NSRegularExpressionOptions)0
                                                                                   error:nil];
@@ -158,9 +195,18 @@ static NSData * _Nonnull FBUTF8Data(NSString *string)
             withPath:(NSString *)path
                block:(void (^)(RouteRequest *request, RouteResponse *response))block
 {
+  [self handleMethod:method withPath:path standalone:NO block:block];
+}
+
+- (void)handleMethod:(NSString *)method
+            withPath:(NSString *)path
+          standalone:(BOOL)standalone
+               block:(void (^)(RouteRequest *request, RouteResponse *response))block
+{
   FBHTTPRoute *route = [self compiledRouteWithPath:path];
   route.verb = method.uppercaseString;
   route.block = block;
+  route.isStandalone = standalone;
   [self.routes addObject:route];
 }
 
@@ -191,6 +237,7 @@ static NSData * _Nonnull FBUTF8Data(NSString *string)
   @synchronized (self.connectionBuffers) {
     [self.connectionBuffers removeAllObjects];
     [self.pendingRequestHeaders removeAllObjects];
+    [self.connectionsAwaitingResponse removeAllObjects];
   }
   _isRunning = NO;
 }
@@ -209,123 +256,136 @@ static NSData * _Nonnull FBUTF8Data(NSString *string)
   @synchronized (self.connectionBuffers) {
     [self.connectionBuffers removeObjectForKey:client];
     [self.pendingRequestHeaders removeObjectForKey:client];
+    [self.connectionsAwaitingResponse removeObject:client];
   }
 }
 
 - (void)client:(nw_connection_t)client didReceiveData:(NSData *)data
 {
-  NSMutableData *buffer;
-  @synchronized (self.connectionBuffers) {
-    buffer = [self.connectionBuffers objectForKey:client];
-    if (nil == buffer) {
+  // The append itself, not just the parse, must run on bufferProcessingQueue: otherwise a receive
+  // callback here could still mutate the buffer while -processBufferForClient: is reading it
+  // unlocked on that queue.
+  __weak typeof(self) weakSelf = self;
+  dispatch_async(self.bufferProcessingQueue, ^{
+    __strong typeof(weakSelf) strongSelf = weakSelf;
+    if (nil == strongSelf) {
       return;
     }
-    [buffer appendData:data];
-  }
-  [self processBufferForClient:client];
+    @synchronized (strongSelf.connectionBuffers) {
+      NSMutableData *buffer = [strongSelf.connectionBuffers objectForKey:client];
+      if (nil == buffer) {
+        return;
+      }
+      [buffer appendData:data];
+    }
+    [strongSelf processBufferForClient:client];
+  });
 }
 
 #pragma mark - HTTP parsing
 
+// Parses and dispatches at most one request per call; a connection with one already in flight is
+// left alone (see -connectionsAwaitingResponse) until its response is written.
 - (void)processBufferForClient:(nw_connection_t)client
 {
-  while (YES) {
-    NSMutableData *buffer;
-    FBPendingHTTPRequestHeader *pending;
-    @synchronized (self.connectionBuffers) {
-      buffer = [self.connectionBuffers objectForKey:client];
-      if (nil == buffer) {
-        return;
-      }
-      pending = [self.pendingRequestHeaders objectForKey:client];
+  NSMutableData *buffer;
+  FBPendingHTTPRequestHeader *pending;
+  @synchronized (self.connectionBuffers) {
+    if ([self.connectionsAwaitingResponse containsObject:client]) {
+      return;
     }
-
-    if (nil == pending) {
-      NSRange headerEndRange = [buffer rangeOfData:FBCRLFCRLFData() options:(NSDataSearchOptions)0 range:NSMakeRange(0, buffer.length)];
-      if (NSNotFound == headerEndRange.location) {
-        // Wait for the rest of the header block to arrive.
-        return;
-      }
-
-      NSData *headerData = [buffer subdataWithRange:NSMakeRange(0, headerEndRange.location)];
-      NSString *headerString = [[NSString alloc] initWithData:headerData encoding:NSUTF8StringEncoding];
-      NSArray<NSString *> *lines = [headerString componentsSeparatedByString:@"\r\n"];
-      if (lines.count < 1) {
-        [self respondBadRequestToClient:client];
-        return;
-      }
-
-      NSArray<NSString *> *requestLineParts = [lines.firstObject componentsSeparatedByString:@" "];
-      if (requestLineParts.count < 2) {
-        [self respondBadRequestToClient:client];
-        return;
-      }
-
-      NSMutableDictionary<NSString *, NSString *> *requestHeaders = [NSMutableDictionary dictionary];
-      for (NSUInteger i = 1; i < lines.count; i++) {
-        NSString *line = lines[i];
-        NSRange colonRange = [line rangeOfString:@":"];
-        if (NSNotFound == colonRange.location) {
-          continue;
-        }
-        NSString *name = [line substringToIndex:colonRange.location];
-        NSString *value = [[line substringFromIndex:colonRange.location + 1]
-                            stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceCharacterSet];
-        requestHeaders[name.lowercaseString] = value;
-      }
-
-      NSString *transferEncoding = requestHeaders[@"transfer-encoding"];
-      if (transferEncoding.length > 0) {
-        // No transfer decoder is implemented at all, so any encoding (chunked or otherwise -
-        // including a value only introduced by a duplicate header overwriting "chunked" above)
-        // is rejected rather than risking the body being misread as empty and desyncing the rest
-        // of the connection's request stream.
-        RouteResponse *notImplemented = [RouteResponse new];
-        id<FBResponsePayload> notImplementedPayload = FBResponseWithStatus([FBCommandStatus unknownCommandErrorWithMessage:@"Transfer-Encoding is not supported"
-                                                                                                                  traceback:nil]);
-        [notImplementedPayload dispatchWithResponse:notImplemented];
-        [self failClient:client withResponse:notImplemented];
-        return;
-      }
-
-      NSUInteger contentLength = (NSUInteger)requestHeaders[@"content-length"].integerValue;
-      if (contentLength > FBConfiguration.sharedInstance.httpRequestBodySizeLimit) {
-        // Mirrors CocoaHTTPServer's maxRequestBodySize enforcement. Closes the connection after
-        // responding, since the rest of the oversized body is still incoming.
-        RouteResponse *tooLarge = [RouteResponse new];
-        id<FBResponsePayload> tooLargePayload = FBResponseWithStatus([FBCommandStatus unknownCommandErrorWithMessage:@"Request Entity Too Large"
-                                                                                                            traceback:nil]);
-        [tooLargePayload dispatchWithResponse:tooLarge];
-        [self failClient:client withResponse:tooLarge];
-        return;
-      }
-
-      pending = [FBPendingHTTPRequestHeader new];
-      pending.method = requestLineParts[0].uppercaseString;
-      pending.pathAndQuery = requestLineParts[1];
-      pending.bodyStart = headerEndRange.location + headerEndRange.length;
-      pending.contentLength = contentLength;
-      @synchronized (self.connectionBuffers) {
-        [self.pendingRequestHeaders setObject:pending forKey:client];
-      }
+    buffer = [self.connectionBuffers objectForKey:client];
+    if (nil == buffer) {
+      return;
     }
+    pending = [self.pendingRequestHeaders objectForKey:client];
+  }
 
-    NSUInteger totalRequestLength = pending.bodyStart + pending.contentLength;
-    if (buffer.length < totalRequestLength) {
-      // Wait for the rest of the body to arrive - the parsed header stays cached above, so this
-      // doesn't re-scan/re-parse the header block on every subsequently arriving chunk.
+  if (nil == pending) {
+    NSRange headerEndRange = [buffer rangeOfData:FBCRLFCRLFData() options:(NSDataSearchOptions)0 range:NSMakeRange(0, buffer.length)];
+    if (NSNotFound == headerEndRange.location) {
+      // Wait for the rest of the header block to arrive.
       return;
     }
 
-    NSData *body = pending.contentLength > 0 ? [buffer subdataWithRange:NSMakeRange(pending.bodyStart, pending.contentLength)] : [NSData data];
-
-    @synchronized (self.connectionBuffers) {
-      [buffer replaceBytesInRange:NSMakeRange(0, totalRequestLength) withBytes:NULL length:0];
-      [self.pendingRequestHeaders removeObjectForKey:client];
+    NSData *headerData = [buffer subdataWithRange:NSMakeRange(0, headerEndRange.location)];
+    NSString *headerString = [[NSString alloc] initWithData:headerData encoding:NSUTF8StringEncoding];
+    NSArray<NSString *> *lines = [headerString componentsSeparatedByString:@"\r\n"];
+    if (lines.count < 1) {
+      [self respondBadRequestToClient:client];
+      return;
     }
 
-    [self dispatchMethod:pending.method pathAndQuery:pending.pathAndQuery body:body client:client];
+    NSArray<NSString *> *requestLineParts = [lines.firstObject componentsSeparatedByString:@" "];
+    if (requestLineParts.count < 2) {
+      [self respondBadRequestToClient:client];
+      return;
+    }
+
+    NSMutableDictionary<NSString *, NSString *> *requestHeaders = [NSMutableDictionary dictionary];
+    for (NSUInteger i = 1; i < lines.count; i++) {
+      NSString *line = lines[i];
+      NSRange colonRange = [line rangeOfString:@":"];
+      if (NSNotFound == colonRange.location) {
+        continue;
+      }
+      NSString *name = [line substringToIndex:colonRange.location];
+      NSString *value = [[line substringFromIndex:colonRange.location + 1]
+                          stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceCharacterSet];
+      requestHeaders[name.lowercaseString] = value;
+    }
+
+    NSString *transferEncoding = requestHeaders[@"transfer-encoding"];
+    if (transferEncoding.length > 0) {
+      // No transfer decoder is implemented at all, so any encoding (chunked or otherwise -
+      // including a value only introduced by a duplicate header overwriting "chunked" above)
+      // is rejected rather than risking the body being misread as empty and desyncing the rest
+      // of the connection's request stream.
+      RouteResponse *notImplemented = [RouteResponse new];
+      id<FBResponsePayload> notImplementedPayload = FBResponseWithStatus([FBCommandStatus invalidArgumentErrorWithMessage:@"Transfer-Encoding is not supported"
+                                                                                                                  traceback:nil]);
+      [notImplementedPayload dispatchWithResponse:notImplemented];
+      [self failClient:client withResponse:notImplemented];
+      return;
+    }
+
+    NSUInteger contentLength = (NSUInteger)requestHeaders[@"content-length"].integerValue;
+    if (contentLength > FBConfiguration.sharedInstance.httpRequestBodySizeLimit) {
+      // Closes the connection after responding, since the rest of the oversized body is still incoming.
+      RouteResponse *tooLarge = [RouteResponse new];
+      id<FBResponsePayload> tooLargePayload = FBResponseWithStatus([FBCommandStatus invalidArgumentErrorWithMessage:@"The request body exceeds the configured size limit"
+                                                                                                            traceback:nil]);
+      [tooLargePayload dispatchWithResponse:tooLarge];
+      [self failClient:client withResponse:tooLarge];
+      return;
+    }
+
+    pending = [FBPendingHTTPRequestHeader new];
+    pending.method = requestLineParts[0].uppercaseString;
+    pending.pathAndQuery = requestLineParts[1];
+    pending.bodyStart = headerEndRange.location + headerEndRange.length;
+    pending.contentLength = contentLength;
+    @synchronized (self.connectionBuffers) {
+      [self.pendingRequestHeaders setObject:pending forKey:client];
+    }
   }
+
+  NSUInteger totalRequestLength = pending.bodyStart + pending.contentLength;
+  if (buffer.length < totalRequestLength) {
+    // Wait for the rest of the body to arrive - the parsed header stays cached above, so this
+    // doesn't re-scan/re-parse the header block on every subsequently arriving chunk.
+    return;
+  }
+
+  NSData *body = pending.contentLength > 0 ? [buffer subdataWithRange:NSMakeRange(pending.bodyStart, pending.contentLength)] : [NSData data];
+
+  @synchronized (self.connectionBuffers) {
+    [buffer replaceBytesInRange:NSMakeRange(0, totalRequestLength) withBytes:NULL length:0];
+    [self.pendingRequestHeaders removeObjectForKey:client];
+    [self.connectionsAwaitingResponse addObject:client];
+  }
+
+  [self dispatchMethod:pending.method pathAndQuery:pending.pathAndQuery body:body client:client];
 }
 
 // Removes the client's buffered state and responds with a closing error response. Removing the
@@ -344,8 +404,8 @@ static NSData * _Nonnull FBUTF8Data(NSString *string)
 - (void)respondBadRequestToClient:(nw_connection_t)client
 {
   RouteResponse *badRequest = [RouteResponse new];
-  id<FBResponsePayload> payload = FBResponseWithStatus([FBCommandStatus unknownCommandErrorWithMessage:@"The request could not be parsed as valid HTTP"
-                                                                                              traceback:nil]);
+  id<FBResponsePayload> payload = FBResponseWithStatus([FBCommandStatus invalidArgumentErrorWithMessage:@"The request could not be parsed as valid HTTP"
+                                                                                                traceback:nil]);
   [payload dispatchWithResponse:badRequest];
   [self failClient:client withResponse:badRequest];
 }
@@ -388,9 +448,29 @@ static NSData * _Nonnull FBUTF8Data(NSString *string)
     RouteResponse *response = [RouteResponse new];
     [self applyDefaultHeadersToResponse:response];
 
+    NSString *sessionID = params[@"sessionID"];
+    if (route.isStandalone) {
+      // DELETE triggers -abandonPendingRequestsForSessionID: itself; tracking its own request
+      // would make it abandon itself and write a response twice.
+      NSString *trackedSessionID = [route.verb isEqualToString:@"DELETE"] ? nil : sessionID;
+      [self dispatchStandaloneRoute:route request:request response:response client:client method:method pathAndQuery:pathAndQuery sessionID:trackedSessionID];
+      return;
+    }
+
+    FBPendingRequest *pendingRequest = nil;
+    if (nil != sessionID) {
+      pendingRequest = [[FBPendingRequest alloc] initWithClient:client];
+      [self trackPendingRequest:pendingRequest forSessionID:sessionID];
+    }
+
     void (^invoke)(void) = ^{
       route.block(request, response);
-      [self writeResponse:response toClient:client];
+      // Whoever untracks `pendingRequest` first "wins" and gets to respond - either this normal
+      // completion, or -abandonPendingRequestsForSessionID: on another thread.
+      BOOL shouldRespond = (nil == pendingRequest) || [self untrackPendingRequest:pendingRequest forSessionID:sessionID];
+      if (shouldRespond) {
+        [self writeResponse:response toClient:client];
+      }
     };
     dispatch_queue_t routeQueue = self.routeQueue;
     if (routeQueue) {
@@ -407,6 +487,103 @@ static NSData * _Nonnull FBUTF8Data(NSString *string)
   [FBResponseWithStatus(status) dispatchWithResponse:notFound];
   [self applyDefaultHeadersToResponse:notFound];
   [self writeResponse:notFound toClient:client];
+}
+
+#pragma mark - Session-scoped request cancellation
+
+- (void)trackPendingRequest:(FBPendingRequest *)pendingRequest forSessionID:(NSString *)sessionID
+{
+  @synchronized (self.pendingSessionRequests) {
+    NSMutableSet<FBPendingRequest *> *pendingRequests = self.pendingSessionRequests[sessionID];
+    if (nil == pendingRequests) {
+      pendingRequests = [NSMutableSet set];
+      self.pendingSessionRequests[sessionID] = pendingRequests;
+    }
+    [pendingRequests addObject:pendingRequest];
+  }
+}
+
+// Returns YES if this caller won the race to respond, vs. -abandonPendingRequestsForSessionID:
+// already having claimed `pendingRequest` on another thread.
+- (BOOL)untrackPendingRequest:(FBPendingRequest *)pendingRequest forSessionID:(NSString *)sessionID
+{
+  @synchronized (self.pendingSessionRequests) {
+    NSMutableSet<FBPendingRequest *> *pendingRequests = self.pendingSessionRequests[sessionID];
+    BOOL wasPending = [pendingRequests containsObject:pendingRequest];
+    if (wasPending) {
+      [pendingRequests removeObject:pendingRequest];
+      if (0 == pendingRequests.count) {
+        [self.pendingSessionRequests removeObjectForKey:sessionID];
+      }
+    }
+    return wasPending;
+  }
+}
+
+- (void)abandonPendingRequestsForSessionID:(NSString *)sessionID withResponse:(RouteResponse *)response
+{
+  NSSet<FBPendingRequest *> *pendingRequests;
+  @synchronized (self.pendingSessionRequests) {
+    pendingRequests = [self.pendingSessionRequests[sessionID] copy];
+    [self.pendingSessionRequests removeObjectForKey:sessionID];
+  }
+  for (FBPendingRequest *pendingRequest in pendingRequests) {
+    [self writeResponse:response toClient:pendingRequest.client];
+  }
+}
+
+#pragma mark - Standalone route dispatch
+
+- (void)dispatchStandaloneRoute:(FBHTTPRoute *)route
+                         request:(RouteRequest *)request
+                        response:(RouteResponse *)response
+                          client:(nw_connection_t)client
+                          method:(NSString *)method
+                    pathAndQuery:(NSString *)pathAndQuery
+                       sessionID:(nullable NSString *)sessionID
+{
+  // Includes the query string so requests with different params are never coalesced together.
+  NSString *key = [NSString stringWithFormat:@"%@ %@", method, pathAndQuery];
+  FBPendingRequest *waiter = [[FBPendingRequest alloc] initWithClient:client];
+  if (nil != sessionID) {
+    [self trackPendingRequest:waiter forSessionID:sessionID];
+  }
+
+  BOOL isInFlight = NO;
+  @synchronized (self.standaloneWaiters) {
+    NSMutableArray<FBPendingRequest *> *waiters = self.standaloneWaiters[key];
+    if (nil != waiters) {
+      [waiters addObject:waiter];
+      isInFlight = YES;
+    } else {
+      self.standaloneWaiters[key] = [NSMutableArray array];
+    }
+  }
+  if (isInFlight) {
+    // An identical request is already executing; it will deliver this connection's response too.
+    return;
+  }
+
+  dispatch_queue_t queue = dispatch_queue_create(key.UTF8String, DISPATCH_QUEUE_SERIAL);
+  __weak typeof(self) weakSelf = self;
+  dispatch_async(queue, ^{
+    route.block(request, response);
+    __strong typeof(weakSelf) strongSelf = weakSelf;
+    if (nil == strongSelf) {
+      return;
+    }
+    NSArray<FBPendingRequest *> *joinedWaiters;
+    @synchronized (strongSelf.standaloneWaiters) {
+      joinedWaiters = [strongSelf.standaloneWaiters[key] copy];
+      [strongSelf.standaloneWaiters removeObjectForKey:key];
+    }
+    for (FBPendingRequest *joinedWaiter in [@[waiter] arrayByAddingObjectsFromArray:joinedWaiters]) {
+      BOOL shouldRespond = (nil == sessionID) || [strongSelf untrackPendingRequest:joinedWaiter forSessionID:sessionID];
+      if (shouldRespond) {
+        [strongSelf writeResponse:response toClient:joinedWaiter.client];
+      }
+    }
+  });
 }
 
 - (void)writeResponse:(RouteResponse *)response toClient:(nw_connection_t)client
@@ -439,7 +616,15 @@ static NSData * _Nonnull FBUTF8Data(NSString *string)
       [weakSelf closeClient:client];
     }];
   } else {
+    // Sent before unblocking the next pipelined request, so responses can't reach the wire out of order.
     [self.socket writeData:payload toClient:client];
+    @synchronized (self.connectionBuffers) {
+      [self.connectionsAwaitingResponse removeObject:client];
+    }
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(self.bufferProcessingQueue, ^{
+      [weakSelf processBufferForClient:client];
+    });
   }
 }
 
@@ -447,6 +632,7 @@ static NSData * _Nonnull FBUTF8Data(NSString *string)
 {
   @synchronized (self.connectionBuffers) {
     [self.connectionBuffers removeObjectForKey:client];
+    [self.connectionsAwaitingResponse removeObject:client];
   }
   nw_connection_cancel(client);
 }
