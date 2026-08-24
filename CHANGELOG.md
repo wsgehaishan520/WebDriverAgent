@@ -1,3 +1,9 @@
+## [16.7.2](https://github.com/appium/WebDriverAgent/compare/v16.7.1...v16.7.2) (2026-08-24)
+
+### Bug Fixes
+
+* harden FBHTTPServer/FBTCPSocket against races and protocol gaps ([#1224](https://github.com/appium/WebDriverAgent/issues/1224)) ([cf4bb2b](https://github.com/appium/WebDriverAgent/commit/cf4bb2b57b4d3a55ee4bbe8f860b00b0e7f5a326))
+
 ## [16.7.1](https://github.com/appium/WebDriverAgent/compare/v16.7.0...v16.7.1) (2026-08-23)
 
 ### Bug Fixes
