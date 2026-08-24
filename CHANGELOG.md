@@ -1,3 +1,9 @@
+## [16.7.3](https://github.com/appium/WebDriverAgent/compare/v16.7.2...v16.7.3) (2026-08-24)
+
+### Bug Fixes
+
+* let /status, /screenshot, and DELETE /session API methods to bypass the dispatch queue ([#1222](https://github.com/appium/WebDriverAgent/issues/1222)) ([f99b011](https://github.com/appium/WebDriverAgent/commit/f99b0111bba6f5cceabbddf1f9f0144d69d8f168))
+
 ## [16.7.2](https://github.com/appium/WebDriverAgent/compare/v16.7.1...v16.7.2) (2026-08-24)
 
 ### Bug Fixes
