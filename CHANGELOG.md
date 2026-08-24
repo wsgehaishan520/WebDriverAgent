@@ -1,3 +1,9 @@
+## [16.8.0](https://github.com/appium/WebDriverAgent/compare/v16.7.3...v16.8.0) (2026-08-24)
+
+### Features
+
+* bound accessibility snapshot requests to avoid indefinite hangs ([#1214](https://github.com/appium/WebDriverAgent/issues/1214)) ([cd829eb](https://github.com/appium/WebDriverAgent/commit/cd829eb9725f57efbfb9538a073de059020ddd38))
+
 ## [16.7.3](https://github.com/appium/WebDriverAgent/compare/v16.7.2...v16.7.3) (2026-08-24)
 
 ### Bug Fixes
