@@ -1,3 +1,10 @@
+## [16.9.1](https://github.com/appium/WebDriverAgent/compare/v16.9.0...v16.9.1) (2026-08-28)
+
+### Bug Fixes
+
+* add missing settings to the exported WDASettings/WDACapabilities types ([#1230](https://github.com/appium/WebDriverAgent/issues/1230)) ([a9e8203](https://github.com/appium/WebDriverAgent/commit/a9e8203d71051db7a0c14c192288b2b5115cf5cf))
+* do not trust XCUIElement.lastSnapshot for long-lived elements ([#1235](https://github.com/appium/WebDriverAgent/issues/1235)) ([57968cc](https://github.com/appium/WebDriverAgent/commit/57968cc58b69ea9f036d70a694a0c9a5b6f764f7))
+
 ## [16.9.0](https://github.com/appium/WebDriverAgent/compare/v16.8.0...v16.9.0) (2026-08-27)
 
 ### Features
