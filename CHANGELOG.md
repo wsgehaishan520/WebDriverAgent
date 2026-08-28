@@ -1,3 +1,14 @@
+## [16.9.2](https://github.com/appium/WebDriverAgent/compare/v16.9.1...v16.9.2) (2026-08-28)
+
+### Bug Fixes
+
+* cache the testmanagerd protocol version fallback on timeout ([#1228](https://github.com/appium/WebDriverAgent/issues/1228)) ([f3d8e0c](https://github.com/appium/WebDriverAgent/commit/f3d8e0ce42488b6e95a74f1c59e0f20a500d1a54))
+* sanitize non-UTF-8-encodable strings before JSON response serialization ([#1236](https://github.com/appium/WebDriverAgent/issues/1236)) ([fa6a250](https://github.com/appium/WebDriverAgent/commit/fa6a2503222ac2ffd039cb73a96689467774d7f2))
+
+### Miscellaneous Chores
+
+* **deps:** bump @appium/strongbox from 1.1.3 to 2.0.0 ([#1237](https://github.com/appium/WebDriverAgent/issues/1237)) ([03db844](https://github.com/appium/WebDriverAgent/commit/03db844ee0cb408bb323d0d77241ba55188c47f3))
+
 ## [16.9.1](https://github.com/appium/WebDriverAgent/compare/v16.9.0...v16.9.1) (2026-08-28)
 
 ### Bug Fixes
