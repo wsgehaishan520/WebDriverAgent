@@ -1,3 +1,9 @@
+## [16.9.4](https://github.com/appium/WebDriverAgent/compare/v16.9.3...v16.9.4) (2026-08-29)
+
+### Bug Fixes
+
+* drop MJPEG frames for clients that stop draining their socket ([#1227](https://github.com/appium/WebDriverAgent/issues/1227)) ([00cb6b6](https://github.com/appium/WebDriverAgent/commit/00cb6b612a5a1a1d00a386e23de01c4eca811df8))
+
 ## [16.9.3](https://github.com/appium/WebDriverAgent/compare/v16.9.2...v16.9.3) (2026-08-29)
 
 ### Bug Fixes
