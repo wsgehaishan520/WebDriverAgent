@@ -1,3 +1,9 @@
+## [16.9.3](https://github.com/appium/WebDriverAgent/compare/v16.9.2...v16.9.3) (2026-08-29)
+
+### Bug Fixes
+
+* reject malformed Content-Length values and bound request header buffering ([#1226](https://github.com/appium/WebDriverAgent/issues/1226)) ([60c5fc4](https://github.com/appium/WebDriverAgent/commit/60c5fc461d91611778b8bb0745a21c80451d6ccf))
+
 ## [16.9.2](https://github.com/appium/WebDriverAgent/compare/v16.9.1...v16.9.2) (2026-08-28)
 
 ### Bug Fixes
