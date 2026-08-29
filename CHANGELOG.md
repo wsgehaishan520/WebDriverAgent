@@ -1,3 +1,9 @@
+## [16.10.0](https://github.com/appium/WebDriverAgent/compare/v16.9.4...v16.10.0) (2026-08-29)
+
+### Features
+
+* add displayId in the wda/screen ([#1238](https://github.com/appium/WebDriverAgent/issues/1238)) ([bfbe6b0](https://github.com/appium/WebDriverAgent/commit/bfbe6b00b196647f87267827627a5ff675496c30))
+
 ## [16.9.4](https://github.com/appium/WebDriverAgent/compare/v16.9.3...v16.9.4) (2026-08-29)
 
 ### Bug Fixes
