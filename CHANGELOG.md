@@ -1,3 +1,9 @@
+## [16.11.0](https://github.com/appium/WebDriverAgent/compare/v16.10.0...v16.11.0) (2026-08-29)
+
+### Features
+
+* expose AXTimeout and XCTest XPC request timeout wrappers  ([#1233](https://github.com/appium/WebDriverAgent/issues/1233)) ([d5c8571](https://github.com/appium/WebDriverAgent/commit/d5c85718c32bc495a0f73518d3e40eee624b3582))
+
 ## [16.10.0](https://github.com/appium/WebDriverAgent/compare/v16.9.4...v16.10.0) (2026-08-29)
 
 ### Features
