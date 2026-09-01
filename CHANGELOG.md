@@ -1,3 +1,9 @@
+## [16.12.1](https://github.com/appium/WebDriverAgent/compare/v16.12.0...v16.12.1) (2026-09-01)
+
+### Miscellaneous Chores
+
+* bump support-related dependencies ([#1245](https://github.com/appium/WebDriverAgent/issues/1245)) ([3ff08a6](https://github.com/appium/WebDriverAgent/commit/3ff08a64b2428bbc81aef1dece492f49e273d702))
+
 ## [16.12.0](https://github.com/appium/WebDriverAgent/compare/v16.11.4...v16.12.0) (2026-09-01)
 
 ### Features
