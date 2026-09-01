@@ -1,3 +1,13 @@
+## [16.12.0](https://github.com/appium/WebDriverAgent/compare/v16.11.4...v16.12.0) (2026-09-01)
+
+### Features
+
+* add get screens endpoint ([#1242](https://github.com/appium/WebDriverAgent/issues/1242)) ([55808de](https://github.com/appium/WebDriverAgent/commit/55808de21df801c69991cd0de66ee7eeaac3407e))
+
+### Bug Fixes
+
+* scope xcodebuild process kill to this package's own processes ([#1244](https://github.com/appium/WebDriverAgent/issues/1244)) ([988f309](https://github.com/appium/WebDriverAgent/commit/988f3097876f627a48b38a242958c755c429db95))
+
 ## [16.11.4](https://github.com/appium/WebDriverAgent/compare/v16.11.3...v16.11.4) (2026-08-30)
 
 ### Bug Fixes
