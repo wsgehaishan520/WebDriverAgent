@@ -133,7 +133,8 @@ static NSString *const FB_KEY_ACTIONS = @"actions";
     }
     self.duration = durationObj.doubleValue;
     XCUICoordinate *position = [self positionWithError:error];
-    if (nil == position) {
+    // A pause may legally have no position yet (nil position, no error set)
+    if (nil == position && error && nil != *error) {
       return nil;
     }
     self.atPosition = position;
@@ -143,7 +144,7 @@ static NSString *const FB_KEY_ACTIONS = @"actions";
 
 - (nullable XCUICoordinate *)positionWithError:(NSError **)error
 {
-  if (nil == self.previousItem) {
+  if (nil == self.previousItem || nil == self.previousItem.atPosition) {
     NSString *errorDescription = [NSString stringWithFormat:@"The '%@' action item must be preceded by %@ item", self.actionItem, FB_ACTION_ITEM_TYPE_POINTER_MOVE];
     if (error) {
       *error = [[FBErrorBuilder.builder withDescription:errorDescription] build];
@@ -205,9 +206,19 @@ static NSString *const FB_KEY_ACTIONS = @"actions";
                                  currentItemIndex:(NSUInteger)currentItemIndex
                                             error:(NSError **)error
 {
-  if (nil != eventPath && currentItemIndex == 1) {
+  if (nil != eventPath && currentItemIndex >= 1) {
     FBW3CGestureItem *preceedingItem = [allItems objectAtIndex:currentItemIndex - 1];
-    if ([preceedingItem isKindOfClass:FBPointerMoveItem.class]) {
+    // Only skip creating a new touch if the preceding pointerMove is the one that
+    // implicitly opened this touch, i.e. nothing but (possibly zero-duration) pauses
+    // came before it. Pauses never create an event path themselves.
+    BOOL isPreceedingMoveTheFirstRealItem = YES;
+    for (NSInteger index = (NSInteger)currentItemIndex - 2; index >= 0; index--) {
+      if (![[allItems objectAtIndex:index] isKindOfClass:FBPointerPauseItem.class]) {
+        isPreceedingMoveTheFirstRealItem = NO;
+        break;
+      }
+    }
+    if ([preceedingItem isKindOfClass:FBPointerMoveItem.class] && isPreceedingMoveTheFirstRealItem) {
       return @[];
     }
   }
@@ -280,7 +291,7 @@ static NSString *const FB_KEY_ACTIONS = @"actions";
   }
   
   // origin == FB_ORIGIN_TYPE_POINTER
-  if (nil == self.previousItem) {
+  if (nil == self.previousItem || nil == self.previousItem.atPosition) {
     NSString *errorDescription = [NSString stringWithFormat:@"There is no previous item for '%@' action item, however %@ is set to '%@'", self.actionItem, FB_ACTION_ITEM_KEY_ORIGIN, FB_ORIGIN_TYPE_POINTER];
     if (error) {
       *error = [[FBErrorBuilder.builder withDescription:errorDescription] build];
@@ -318,6 +329,13 @@ static NSString *const FB_KEY_ACTIONS = @"actions";
 + (NSString *)actionName
 {
   return FB_ACTION_ITEM_TYPE_PAUSE;
+}
+
+- (nullable XCUICoordinate *)positionWithError:(NSError **)error
+{
+  // A pause has no position of its own; proxy whatever real move preceded
+  // it, or nil (not a fabricated point) if none has run yet
+  return self.previousItem.atPosition;
 }
 
 - (NSArray<XCPointerEventPath *> *)addToEventPath:(XCPointerEventPath *)eventPath
