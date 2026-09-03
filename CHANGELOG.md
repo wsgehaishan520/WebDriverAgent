@@ -1,3 +1,9 @@
+## [16.12.2](https://github.com/appium/WebDriverAgent/compare/v16.12.1...v16.12.2) (2026-09-03)
+
+### Bug Fixes
+
+* allow pause action items to appear before any pointer movement ([#1246](https://github.com/appium/WebDriverAgent/issues/1246)) ([282478a](https://github.com/appium/WebDriverAgent/commit/282478a2e631501fd904b0675717123c779d9b84))
+
 ## [16.12.1](https://github.com/appium/WebDriverAgent/compare/v16.12.0...v16.12.1) (2026-09-01)
 
 ### Miscellaneous Chores
