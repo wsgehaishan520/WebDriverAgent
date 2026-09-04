@@ -1,3 +1,9 @@
+## [16.12.3](https://github.com/appium/WebDriverAgent/compare/v16.12.2...v16.12.3) (2026-09-04)
+
+### Bug Fixes
+
+* resolve key name lookup for dictionary-form keyboardInput keys ([#1247](https://github.com/appium/WebDriverAgent/issues/1247)) ([f40bac6](https://github.com/appium/WebDriverAgent/commit/f40bac6ea77f6220883fe4437ee63e51fe44d74f))
+
 ## [16.12.2](https://github.com/appium/WebDriverAgent/compare/v16.12.1...v16.12.2) (2026-09-03)
 
 ### Bug Fixes
