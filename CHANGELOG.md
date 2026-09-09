@@ -1,3 +1,9 @@
+## [16.12.6](https://github.com/appium/WebDriverAgent/compare/v16.12.5...v16.12.6) (2026-09-09)
+
+### Bug Fixes
+
+* rescale gesture coordinates for compatibility-mode window mismatches ([#1249](https://github.com/appium/WebDriverAgent/issues/1249)) ([25fcd95](https://github.com/appium/WebDriverAgent/commit/25fcd9558314c367c755b047cd0db0949654e90b))
+
 ## [16.12.5](https://github.com/appium/WebDriverAgent/compare/v16.12.4...v16.12.5) (2026-09-07)
 
 ### Bug Fixes
