@@ -1,3 +1,9 @@
+## [16.12.7](https://github.com/appium/WebDriverAgent/compare/v16.12.6...v16.12.7) (2026-09-10)
+
+### Bug Fixes
+
+* remaining strong box file ([#1255](https://github.com/appium/WebDriverAgent/issues/1255)) ([f5f7004](https://github.com/appium/WebDriverAgent/commit/f5f70041e463777d7604e84fd8d27bf11cb268b9))
+
 ## [16.12.6](https://github.com/appium/WebDriverAgent/compare/v16.12.5...v16.12.6) (2026-09-09)
 
 ### Bug Fixes
