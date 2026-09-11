@@ -1,3 +1,9 @@
+## [16.12.8](https://github.com/appium/WebDriverAgent/compare/v16.12.7...v16.12.8) (2026-09-11)
+
+### Bug Fixes
+
+* use wdFrame instead of raw frame for scroll gesture anchor ([#1256](https://github.com/appium/WebDriverAgent/issues/1256)) ([9ada9fd](https://github.com/appium/WebDriverAgent/commit/9ada9fd4077796b7c1002292c21ec9e45fab4d89))
+
 ## [16.12.7](https://github.com/appium/WebDriverAgent/compare/v16.12.6...v16.12.7) (2026-09-10)
 
 ### Bug Fixes
