@@ -1,3 +1,9 @@
+## [16.12.10](https://github.com/appium/WebDriverAgent/compare/v16.12.9...v16.12.10) (2026-09-21)
+
+### Miscellaneous Chores
+
+* remove unused appium-ios-simulator dependency ([#1265](https://github.com/appium/WebDriverAgent/issues/1265)) ([984de59](https://github.com/appium/WebDriverAgent/commit/984de59ee71f84eb83fce0762d394dea261edce0))
+
 ## [16.12.9](https://github.com/appium/WebDriverAgent/compare/v16.12.8...v16.12.9) (2026-09-19)
 
 ### Bug Fixes
