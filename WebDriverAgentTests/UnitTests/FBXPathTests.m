@@ -16,6 +16,33 @@
 #import "FBXCElementSnapshotWrapper+Helpers.h"
 #import "XCTestPrivateSymbols.h"
 
+// libxml's node callbacks are thread-local; restore any existing callbacks after each probe.
+static __thread NSUInteger FBReviewCreatedDocs;
+static __thread NSUInteger FBReviewFreedDocs;
+static __thread xmlRegisterNodeFunc FBReviewPreviousRegister;
+static __thread xmlDeregisterNodeFunc FBReviewPreviousDeregister;
+
+static void FBReviewRegisterNode(xmlNodePtr node)
+{
+  if (node->type == XML_DOCUMENT_NODE) { FBReviewCreatedDocs++; }
+  if (NULL != FBReviewPreviousRegister) { FBReviewPreviousRegister(node); }
+}
+
+static void FBReviewDeregisterNode(xmlNodePtr node)
+{
+  if (node->type == XML_DOCUMENT_NODE) { FBReviewFreedDocs++; }
+  if (NULL != FBReviewPreviousDeregister) { FBReviewPreviousDeregister(node); }
+}
+
+@interface FBThrowingLabelSnapshot : XCElementSnapshotDouble
+@end
+@implementation FBThrowingLabelSnapshot
+- (NSString *)label
+{
+  @throw [NSException exceptionWithName:@"SnapshotAttributeFailure" reason:@"test" userInfo:nil];
+}
+@end
+
 @interface FBTraversalSnapshot : XCElementSnapshotDouble
 @property (nonatomic, copy) NSArray *childSnapshots;
 @property (nonatomic, weak) FBTraversalSnapshot *parentSnapshot;
@@ -54,6 +81,44 @@
     XCTAssertEqualObjects([self xpathStringResultForQuery:@"count(//*[@index=63])" document:doc], @"1");
   } @finally {
     xmlFreeDoc(doc);
+  }
+}
+
+- (void)testDirectXmlWriterPreservesEscapingAndFormatting
+{
+  XCElementSnapshotDouble *snapshot = [XCElementSnapshotDouble new];
+  snapshot.label = @"line one\nline two\t& < > \" йоло";
+  snapshot.value = @"value";
+  NSString *expected = [[self xmlStringWithElement:(id)snapshot xpathQuery:nil excludingAttributes:nil]
+    stringByReplacingOccurrencesOfString:@" private_indexPath=\"top\"" withString:@""];
+  NSString *actual = [FBXPath xmlStringWithRootElement:(id)snapshot options:nil];
+  XCTAssertEqualObjects(actual, expected);
+}
+
+- (void)testXmlDocumentsAreFreedWhenSnapshotAttributesThrow
+{
+  for (NSNumber *isLookup in @[@NO, @YES]) {
+    FBReviewCreatedDocs = 0;
+    FBReviewFreedDocs = 0;
+    FBReviewPreviousRegister = xmlRegisterNodeDefault(FBReviewRegisterNode);
+    FBReviewPreviousDeregister = xmlDeregisterNodeDefault(FBReviewDeregisterNode);
+    @try {
+      id<FBElement> snapshot = (id)[FBThrowingLabelSnapshot new];
+      if (isLookup.boolValue) {
+        XCTAssertThrowsSpecificNamed([FBXPath matchesWithRootElement:snapshot forQuery:@"//*[@label]"],
+                                     NSException, @"SnapshotAttributeFailure");
+      } else {
+        XCTAssertThrowsSpecificNamed([FBXPath xmlStringWithRootElement:snapshot options:nil],
+                                     NSException, @"SnapshotAttributeFailure");
+      }
+      if (isLookup.boolValue) {
+        XCTAssertGreaterThan(FBReviewCreatedDocs, 0u);
+      }
+      XCTAssertEqual(FBReviewCreatedDocs, FBReviewFreedDocs);
+    } @finally {
+      xmlRegisterNodeDefault(FBReviewPreviousRegister);
+      xmlDeregisterNodeDefault(FBReviewPreviousDeregister);
+    }
   }
 }
 
