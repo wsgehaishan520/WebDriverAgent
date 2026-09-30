@@ -1,3 +1,9 @@
+## [16.13.5](https://github.com/appium/WebDriverAgent/compare/v16.13.4...v16.13.5) (2026-09-30)
+
+### Performance Improvements
+
+* stream page-source XML with exception-safe resource cleanup ([#1276](https://github.com/appium/WebDriverAgent/issues/1276)) ([4e8639b](https://github.com/appium/WebDriverAgent/commit/4e8639bf73f962591e3e7b3be211f289a19ebf84))
+
 ## [16.13.4](https://github.com/appium/WebDriverAgent/compare/v16.13.3...v16.13.4) (2026-09-30)
 
 ### Performance Improvements
