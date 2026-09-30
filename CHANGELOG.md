@@ -1,3 +1,9 @@
+## [16.13.4](https://github.com/appium/WebDriverAgent/compare/v16.13.3...v16.13.4) (2026-09-30)
+
+### Performance Improvements
+
+* use native predicates for accessibility id lookups ([#1286](https://github.com/appium/WebDriverAgent/issues/1286)) ([2ceb940](https://github.com/appium/WebDriverAgent/commit/2ceb940939c2033cb37b846962a966d42bb0ddab))
+
 ## [16.13.3](https://github.com/appium/WebDriverAgent/compare/v16.13.2...v16.13.3) (2026-09-30)
 
 ### Bug Fixes
