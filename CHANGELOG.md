@@ -1,3 +1,9 @@
+## [16.13.1](https://github.com/appium/WebDriverAgent/compare/v16.13.0...v16.13.1) (2026-09-30)
+
+### Performance Improvements
+
+* reuse sibling indices and geometry during XML serialization ([#1283](https://github.com/appium/WebDriverAgent/issues/1283)) ([f352660](https://github.com/appium/WebDriverAgent/commit/f352660deb52728c195a875b4172e38e1a1496b8))
+
 ## [16.13.0](https://github.com/appium/WebDriverAgent/compare/v16.12.11...v16.13.0) (2026-09-30)
 
 ### Features
