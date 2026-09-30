@@ -1,3 +1,9 @@
+## [16.13.3](https://github.com/appium/WebDriverAgent/compare/v16.13.2...v16.13.3) (2026-09-30)
+
+### Bug Fixes
+
+* reject stale sessions without retaining past responses ([#1282](https://github.com/appium/WebDriverAgent/issues/1282)) ([f245ffb](https://github.com/appium/WebDriverAgent/commit/f245ffb4e6906143384410cf312abc5bcedf5486))
+
 ## [16.13.2](https://github.com/appium/WebDriverAgent/compare/v16.13.1...v16.13.2) (2026-09-30)
 
 ### Bug Fixes
