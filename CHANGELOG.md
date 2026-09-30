@@ -1,3 +1,17 @@
+## [16.13.0](https://github.com/appium/WebDriverAgent/compare/v16.12.11...v16.13.0) (2026-09-30)
+
+### Features
+
+* add currentDisplayId setting for screenshots ([#1267](https://github.com/appium/WebDriverAgent/issues/1267)) ([c9366a2](https://github.com/appium/WebDriverAgent/commit/c9366a227b6de19381c96d56a548e9fb53d77dba))
+
+### Bug Fixes
+
+* apply screenshot scaling once when correcting orientation ([#1278](https://github.com/appium/WebDriverAgent/issues/1278)) ([17fd4d0](https://github.com/appium/WebDriverAgent/commit/17fd4d059c351d73384604be40bbade4a03be9a9))
+* avoid infinite-point assertion and hang in coordinate drag gestures ([#1270](https://github.com/appium/WebDriverAgent/issues/1270)) ([c9290a0](https://github.com/appium/WebDriverAgent/commit/c9290a01a63fa195c8aba35c9f0cdad1cd9a6d64)), closes [#1056](https://github.com/appium/WebDriverAgent/issues/1056)
+* cancel connections that end on the client side ([#1273](https://github.com/appium/WebDriverAgent/issues/1273)) ([261c08d](https://github.com/appium/WebDriverAgent/commit/261c08d53917b138eaf2f7d8a744d1151fe3bc8d))
+* isolate xcodebuild readiness state between launches ([#1275](https://github.com/appium/WebDriverAgent/issues/1275)) ([ccc46fe](https://github.com/appium/WebDriverAgent/commit/ccc46fe6de1871a020205488533c1d5b9b7dc756))
+* release LRU cache values when the cache is destroyed ([#1274](https://github.com/appium/WebDriverAgent/issues/1274)) ([fb52865](https://github.com/appium/WebDriverAgent/commit/fb5286515584157659ed86bccdbb64bc3094d91f))
+
 ## [16.12.11](https://github.com/appium/WebDriverAgent/compare/v16.12.10...v16.12.11) (2026-09-28)
 
 ### Bug Fixes
