@@ -1,3 +1,9 @@
+## [16.13.2](https://github.com/appium/WebDriverAgent/compare/v16.13.1...v16.13.2) (2026-09-30)
+
+### Bug Fixes
+
+* process received HTTP bytes before handling EOF ([#1277](https://github.com/appium/WebDriverAgent/issues/1277)) ([203fc4f](https://github.com/appium/WebDriverAgent/commit/203fc4f012ab1d90caf0127fe85f119ad85cb0e8))
+
 ## [16.13.1](https://github.com/appium/WebDriverAgent/compare/v16.13.0...v16.13.1) (2026-09-30)
 
 ### Performance Improvements
